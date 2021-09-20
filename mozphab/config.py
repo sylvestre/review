@@ -52,7 +52,6 @@ class Config(object):
 
             [updater]
             self_last_check = 0
-            arc_last_check = 0
             self_auto_update = True
             get_pre_releases = False
 
