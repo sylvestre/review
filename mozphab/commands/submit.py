@@ -126,6 +126,12 @@ def validate_commit_stack(
         diff_phids = [revision["fields"]["diffPHID"] for revision in revisions.values()]
         diffs = conduit.get_diffs(phids=diff_phids) if diff_phids else {}
 
+    # Preload user identity once (only needed when updating existing revisions).
+    whoami = None
+    if revisions:
+        with wait_message("Figuring out who you are..."):
+            whoami = conduit.whoami()
+
     warnings = {}
     errors = {}
     nodes = {}
@@ -159,8 +165,6 @@ def validate_commit_stack(
             revision_is_closed = bool(fields["status"]["closed"])
 
             # Check if comandeering is required.
-            with wait_message("Figuring out who you are..."):
-                whoami = conduit.whoami()
             different_author = fields["authorPHID"] != whoami["phid"]
 
             # Any reviewers added to a revision without them?
